@@ -1,20 +1,20 @@
+//Para conectar o display SDA vai na porta A4 e o SDK  vai na porta A5,
+//O sensor é conectado da seguinte forma Primeiro pino no positivo, 
+//segundo pino gnd 4 pino no A1.
+
 #include <DHT.h>
 #include <DHT_U.h>
 #include <U8glib.h>
-
-#define DHTPIN A1 // pino que estamos conectado
-#define DHTTYPE DHT11 // DHT 11
-
-
+#define DHTPIN A1 
+#define DHTTYPE DHT11 
 
  
-U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);  // Display which does not send AC
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);  
 DHT dht(DHTPIN, DHTTYPE);
  
 void tela_umidade(float umidade) 
 {
-  //Comandos graficos para o display devem ser colocados aqui
-  //Linha superior - temperatura
+
   u8g.setFont(u8g_font_5x7); 
   u8g.drawStr( 22, 14, "Sensor de Umidade");
   //Hora
@@ -29,14 +29,16 @@ void tela_umidade(float umidade)
 
 void tela_temperatura(float temperatura) 
 {
-  //Comandos graficos para o display devem ser colocados aqui
-  //Linha superior - temperatura
+
   u8g.setFont(u8g_font_5x7); 
-  u8g.drawStr( 15, 14, "Sensor de Temperatura");
+  u8g.drawStr( 12, 14, "Sensor de Temperatura");
   //Hora
   u8g.setFont(u8g_font_fub30);
   u8g.setPrintPos( 10, 57);
   u8g.print(temperatura);
+  u8g.setFont(u8g_font_8x13B);
+  u8g.drawCircle(111, 24, 2); 
+  u8g.drawStr( 115, 33, "C");
   //Texto - AM
   u8g.setFont(u8g_font_5x7);
   //moldura relogio
@@ -69,13 +71,13 @@ void loop(void)
   do {
    tela_temperatura(temperatura);
   }
-  while( u8g.nextPage() );//end of picture loop
+  while( u8g.nextPage() );
   delay(1000);
   u8g.firstPage();   
   do {
    tela_umidade(umidade);
   }
-  while( u8g.nextPage() );//end of picture loop 
+  while( u8g.nextPage() );
    
   delay(2000);
 }
