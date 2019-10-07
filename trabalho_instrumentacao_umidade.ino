@@ -6,49 +6,52 @@
 #include <DHT_U.h>
 #include <U8glib.h>
 #define DHTPIN A1 
-#define DHTTYPE DHT11 
+#define DHTTYPE DHT11  
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);  
+DHT sensorUmidade(DHTPIN, DHTTYPE);
+
+
+float getUmidade(){
+ float umidade = sensorUmidade.readHumidity();  
+ return umidade; 
+}
+
+float getTemperatura(){
+ float temperatura = sensorUmidade.readTemperature();  
+ return temperatura; 
+}
 
  
-U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);  
-DHT dht(DHTPIN, DHTTYPE);
- 
-void tela_umidade(float umidade) 
+void tela_umidade() 
 {
 
   u8g.setFont(u8g_font_5x7); 
   u8g.drawStr( 22, 14, "Sensor de Umidade");
-  //Hora
   u8g.setFont(u8g_font_fub30);
   u8g.setPrintPos( 10, 57);
-  u8g.print(umidade);
-  //Texto - AM
-  u8g.setFont(u8g_font_5x7);
-  //moldura relogio
+  u8g.print(getUmidade());
   u8g.drawRFrame(0,18, 128, 46, 4);
 }
 
-void tela_temperatura(float temperatura) 
+void tela_temperatura() 
 {
 
   u8g.setFont(u8g_font_5x7); 
   u8g.drawStr( 12, 14, "Sensor de Temperatura");
-  //Hora
   u8g.setFont(u8g_font_fub30);
   u8g.setPrintPos( 10, 57);
-  u8g.print(temperatura);
+  u8g.print(getTemperatura());
   u8g.setFont(u8g_font_8x13B);
   u8g.drawCircle(111, 24, 2); 
   u8g.drawStr( 115, 33, "C");
-  //Texto - AM
   u8g.setFont(u8g_font_5x7);
-  //moldura relogio
   u8g.drawRFrame(0,18, 128, 46, 4);
 }
  
 void setup(void) 
 {
   Serial.begin(9600);
-  dht.begin();
+  sensorUmidade.begin();
   if ( u8g.getMode() == U8G_MODE_R3G3B2 ) {
     u8g.setColorIndex(255);     // white
   }
@@ -65,17 +68,15 @@ void setup(void)
  
 void loop(void) 
 {
-  float umidade = dht.readHumidity();
-  float temperatura = dht.readTemperature();
   u8g.firstPage();   
   do {
-   tela_temperatura(temperatura);
+   tela_temperatura();
   }
   while( u8g.nextPage() );
   delay(1000);
   u8g.firstPage();   
   do {
-   tela_umidade(umidade);
+   tela_umidade();
   }
   while( u8g.nextPage() );
    
