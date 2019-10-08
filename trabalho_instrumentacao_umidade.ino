@@ -7,8 +7,10 @@
 #include <U8glib.h>
 #define DHTPIN A1 
 #define DHTTYPE DHT11  
+#define pinCooler 4
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);  
 DHT sensorUmidade(DHTPIN, DHTTYPE);
+
 
 
 float getUmidade(){
@@ -21,7 +23,12 @@ float getTemperatura(){
  return temperatura; 
 }
 
+void ligarCooler(){
  
+
+
+}
+
 void tela_umidade() 
 {
 
@@ -51,6 +58,7 @@ void tela_temperatura()
 void setup(void) 
 {
   Serial.begin(9600);
+  pinMode(pinCooler, OUTPUT);
   sensorUmidade.begin();
   if ( u8g.getMode() == U8G_MODE_R3G3B2 ) {
     u8g.setColorIndex(255);     // white
@@ -79,6 +87,4 @@ void loop(void)
    tela_umidade();
   }
   while( u8g.nextPage() );
-   
-  delay(2000);
 }
