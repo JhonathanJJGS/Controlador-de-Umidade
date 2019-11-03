@@ -5,7 +5,8 @@
 
 #define DHTPIN 2 
 #define DHTTYPE DHT11
-  
+#define fanPin 8
+unsigned int leitura = 0;
 
 
 DHT sensorUmidade(DHTPIN, DHTTYPE);
@@ -27,16 +28,62 @@ float getTemperatura(){
  return temperatura; 
 }
 
+void controle_Fan(){
+  if(getUmidade() >= 60){
+    digitalWrite(fanPin, HIGH);
+    }else{
+      digitalWrite(fanPin, LOW);
+      }
+  }
 
+  void printData(){
 
+     if(digitalRead(fanPin) == 0){
+      Serial.print(getUmidade());
+      Serial.print(",");
+      Serial.print(getTemperatura());
+      Serial.print(",");
+      Serial.print("[FANOFF]");
+      delay(1500);
+      }else{
+            Serial.print(getUmidade());
+            Serial.print(",");
+            Serial.print(getTemperatura());
+            Serial.print(",");
+            Serial.print("[FANON]");
+            delay(1500);
+        }
+    
+    
+    
+    }
+
+  void leituraSerial(){
+  
+  if(Serial.available()>0){
+      leitura = Serial.read();
+      if(leitura == 1){
+
+          digitalWrite(fanPin, HIGH);
+          printData();
+          delay(1500);
+          digitalWrite(fanPin, LOW);
+          
+        }
+      }
+}
+    
+ 
 //-------------------------------------------------------------------
 void setup(void) {
   u8g2.begin();
   Serial.begin(9600);
   sensorUmidade.begin();
+  pinMode(fanPin, OUTPUT);
 }
 
 void loop(void) {
+  leituraSerial();
   u8g2.firstPage();
   do {
     u8g2.setFont(u8g2_font_t0_18_mr);
@@ -53,7 +100,9 @@ void loop(void) {
     u8g2.print(getTemperatura());
     u8g2.drawCircle(115, 42, 2, U8G2_DRAW_ALL);
     u8g2.drawStr( 104, 55, "C");
-    Serial.print(getUmidade());
+    controle_Fan();
+    printData();
+    leituraSerial();
     delay(500);
     
   } while ( u8g2.nextPage() );
